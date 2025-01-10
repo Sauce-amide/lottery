@@ -62,15 +62,27 @@
         data: {
             results: []
         },
+        data: {
+            results: [],
+            prizes: ['李树邦', '苏雯', '徐赛红', '孙丽莉', '滕艳', '侯明', '李荷', '朱麒翰', '许文洁', '蔡文', '李依', '汪可欣'] // 替换为新的列表
+        },
         mounted () {
             let vm = this
             let locals = window.localStorage
             let str_results = []
-            // 遍历(排除choosed)
+            // 获取所有key
+            let keys = []
             for(let i = 0; i<localStorage.length; i++){
-                if (localStorage.key(i) !== 'choosed') {
-                    str_results.push(localStorage.getItem(localStorage.key(i)))
+                let key = localStorage.key(i)
+                if (key !== 'choosed') {
+                    keys.push(key)
                 }
+            }
+            // 按时间顺序排序
+            keys.sort((a, b) => new Date(a) - new Date(b))
+            // 按顺序获取结果
+            for(let key of keys) {
+                str_results.push(localStorage.getItem(key))
             }
             // 分割每个string, 并将</br>换成空格
             let results = []
@@ -81,8 +93,12 @@
             }
             
             // 根据长度进行排序，名单短的放在前面
-            results = results.sort((x, y) => { return x.length - y.length;})
-            this.results = results
+            // results = results.sort((x, y) => { return x.length - y.length;})
+            
+            // 将奖品名称与获奖名单对应
+            this.results = results.map((list, index) => {
+                return list.map(name => `${this.prizes[index]}：${name}`)
+            })
         },
     })
 </script>
